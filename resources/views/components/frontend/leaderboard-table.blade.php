@@ -12,8 +12,8 @@
             <tr>
                 <th scope="row">{{ $user->id }}</th>
                 <td>{{ $user->name }}</td>
-                <td>{{ $user->period_points ?? 0 }}</td>
-                <td>#{{ $user->rank->rank ?? '' }}</td>
+                <td>{{ $user->ranks[0]->total_points ?? 0 }}</td>
+                <td>#{{ $user->ranks[0]->rank ?? '' }}</td>
             </tr>
         @empty
             <tr>

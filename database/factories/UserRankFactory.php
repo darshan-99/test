@@ -16,10 +16,13 @@ class UserRankFactory extends Factory
      */
     public function definition(): array
     {
+        $periodType = $this->faker->randomElement(['day', 'month', 'year', 'all']);
+
         return [
             'user_id' => null,
+            'period_type' => $periodType,
             'total_points' => $this->faker->numberBetween(20, 1000),
-            'rank' => $this->faker->numberBetween(1,10),
+            'rank' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

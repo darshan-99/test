@@ -52,27 +52,41 @@
             (function() {
                 const searchInput = document.getElementById('searchInput');
                 const searchBtn   = document.getElementById('searchBtn');
+                const recalculateBtn   = document.getElementById('recalculateBtn');
                 const sortSelect = document.getElementById('sortSelect');
 
                 async function reload() {
                     const url = new URL(window.location);
-                    url.searchParams.set('search', searchInput.value.trim());
-                    url.searchParams.set('filter', sortSelect.value);
+                    const searchValue = searchInput.value.trim();
+                    const filterValue = sortSelect.value;
+
+                    url.searchParams.delete('search');
+                    url.searchParams.delete('filter');
+
+                    if (searchValue) {
+                        url.searchParams.set('search', searchValue);
+                    }
+
+                    if (filterValue) {
+                        url.searchParams.set('filter', filterValue);
+                    }
+
                     history.replaceState(null, '', url);
 
-                    const params = new URLSearchParams({
-                        search: searchInput.value.trim(),
-                        filter: sortSelect.value,
-                    });
+                    const params = new URLSearchParams();
+                    if (searchValue) params.set('search', searchValue);
+                    if (filterValue) params.set('filter', filterValue);
 
                     const res = await fetch(`{{ route('leaderboard.index') }}?${params}`, {
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
                     });
+
                     const json = await res.json();
                     document.getElementById('leaderboardContainer').innerHTML = json.html;
                 }
 
                 searchBtn.addEventListener('click', () => reload());
+                recalculateBtn.addEventListener('click', () => reload());
                 sortSelect.addEventListener('change', () => reload());
             })();
         </script>

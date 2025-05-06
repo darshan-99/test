@@ -13,24 +13,21 @@ class LeaderboardController extends Controller
     
         $query = User::query();
 
-        if ($search) {
-            $query->where('id', $search);
-        }
-
-        $query->withSum([
-            'activities as period_points' => function($q) use ($filter) {
-                if ($filter === 'day') {
-                    $q->whereDate('performed_at', now());
-                } elseif ($filter === 'month') {
-                    $q->whereMonth('performed_at', now()->month)
-                      ->whereYear('performed_at', now()->year);
-                } elseif ($filter === 'year') {
-                    $q->whereYear('performed_at', now()->year);
-                }
+        $query->whereHas('ranks', function ($q) use ($filter) {
+            if ($filter === 'day') {
+                $q->where('period_type', 'day');
+            } elseif ($filter === 'month') {
+                $q->where('period_type', 'month');
+            } elseif ($filter === 'year') {
+                $q->where('period_type', 'year');
+            } else {
+                $q->where('period_type', 'all');
             }
-        ], 'points');
+        });
 
-        $query->orderByDesc('period_points');
+        if ($search) {
+            $query->orderByRaw("CASE WHEN id = ? THEN 0 ELSE 1 END", [$search]);
+        }
 
         $users = $query->paginate(5)->withQueryString();
 

@@ -51,12 +51,8 @@ class User extends Authenticatable
         return $this->hasMany(UserActivity::class);
     }
 
-    public function rank()
+    public function ranks()
     {
-        return $this->hasOne(UserRank::class)
-            ->withDefault([
-                'total_points' => 0,
-                'rank'         => null,
-            ]);
+        return $this->hasMany(UserRank::class);
     }
 }

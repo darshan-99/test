@@ -14,9 +14,13 @@ return new class extends Migration
         Schema::create('user_ranks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained()->onDelete('cascade');
-            $table->integer('total_points')->default(0);
-            $table->integer('rank')->nullable();
+            $table->enum('period_type', ['day', 'month', 'year', 'all']);
+            $table->unsignedInteger('total_points')->default(0);
+            $table->unsignedInteger('rank')->default(0);
             $table->timestamps();
+
+            $table->index(['period_type']);
+            $table->unique(['user_id', 'period_type'], 'unique_user_period');
         });
     }
 
